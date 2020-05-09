@@ -19,23 +19,20 @@ function Board(props) {
       />);
   }
 
+  const col = props.shape.col;
+  const row = props.shape.row;
+
   return (
     <div>
-      <div className="board-row">
-        {renderSquare(0)}
-        {renderSquare(1)}
-        {renderSquare(2)}
-      </div>
-      <div className="board-row">
-        {renderSquare(3)}
-        {renderSquare(4)}
-        {renderSquare(5)}
-      </div>
-      <div className="board-row">
-        {renderSquare(6)}
-        {renderSquare(7)}
-        {renderSquare(8)}
-      </div>
+      {Array.from(Array(row).keys()).map((i) => {
+        return (
+          <div className="board-row" key={i}>
+            {Array.from(Array(col).keys()).map((j) => {
+              return renderSquare(j + col * i);
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -116,6 +113,7 @@ class Game extends React.Component {
         <div className="game-board">
           <Board
             squares={current.squares}
+            shape={{col: COL, row: ROW}}
             onClick= {(i) => this.handleClick(i)}
           />
         </div>
