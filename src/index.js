@@ -3,19 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 function Square(props) {
+  const background = props.isHighlight ? '#f55' : '#fff';
+
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className="square" onClick={props.onClick} style={{background: background}}>
       {props.value}
     </button>
   );
 }
 
 function Board(props) {
-  const renderSquare = (i) => {
+  const renderSquare = (i, isHighlight) => {
     return (
       <Square
         value={props.squares[i]}
         onClick={() => props.onClick(i)}
+        isHighlight={isHighlight}
       />);
   }
 
@@ -28,7 +31,9 @@ function Board(props) {
         return (
           <div className="board-row" key={i}>
             {Array.from(Array(col).keys()).map((j) => {
-              return renderSquare(j + col * i);
+              const index = j + col * i;
+              const isHighlight = props.highlights.includes(index);
+              return renderSquare(index, isHighlight);
             })}
           </div>
         );
@@ -90,6 +95,7 @@ class Game extends React.Component {
     let history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+    const highlights = calculateHighlights(current.squares);
 
     const COL = 3;
     const ROW = 3;
@@ -124,6 +130,7 @@ class Game extends React.Component {
             squares={current.squares}
             shape={{col: COL, row: ROW}}
             onClick= {(i) => this.handleClick(i)}
+            highlights={highlights}
           />
         </div>
         <div className="game-info">
@@ -165,4 +172,29 @@ function calculateWinner(squares) {
   }
 
   return null;
+}
+
+function calculateHighlights(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const highlights = [];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      highlights.push(a);
+      highlights.push(b);
+      highlights.push(c);
+    }
+  }
+
+  return [...new Set(highlights)];
 }
