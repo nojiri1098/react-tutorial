@@ -2,7 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-function Square(props) {
+type SquareValue = string | null;
+type Squares = Array<SquareValue>;
+type Highlights = Array<number>;
+
+interface SquareProps {
+  value: SquareValue;
+  onClick: () => void;
+  isHighlight: boolean;
+}
+
+function Square(props: SquareProps) {
   const background = props.isHighlight ? '#f55' : '#fff';
 
   return (
@@ -12,8 +22,15 @@ function Square(props) {
   );
 }
 
-function Board(props) {
-  const renderSquare = (i, isHighlight) => {
+interface BoardProps {
+  squares: Squares;
+  shape: { "col": number, "row": number };
+  onClick: (i: number) => void;
+  highlights: Highlights;
+}
+
+function Board(props: BoardProps) {
+  const renderSquare = (i: number, isHighlight: boolean) => {
     return (
       <Square
         value={props.squares[i]}
@@ -42,8 +59,20 @@ function Board(props) {
   );
 }
 
-class Game extends React.Component {
-  constructor(props) {
+interface GameProps { }
+
+interface GameState {
+  history: Array<{
+    squares: Squares;
+    position: number | null;
+  }>;
+  stepNumber: number;
+  xIsNext: boolean;
+  sort: 'asc' | 'desc';
+}
+
+class Game extends React.Component<GameProps, GameState> {
+  constructor(props: any) {
     super(props);
     this.state = {
       history: [{
@@ -56,7 +85,7 @@ class Game extends React.Component {
     };
   }
 
-  handleClick(i) {
+  handleClick(i: number): void {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
@@ -76,14 +105,14 @@ class Game extends React.Component {
     });
   }
 
-  jumpTo(step) {
+  jumpTo(step: number): void {
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
     });
   }
 
-  sortHistory() {
+  sortHistory(): void {
     const sort = this.state.sort === 'asc' ? 'desc' : 'asc';
     this.setState({
       history: this.state.history.reverse(),
@@ -154,7 +183,7 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-function calculateResult(squares) {
+function calculateResult(squares: Squares): string | null {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -180,7 +209,7 @@ function calculateResult(squares) {
   return 'draw';
 }
 
-function calculateHighlights(squares) {
+function calculateHighlights(squares: Squares): Highlights {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -202,5 +231,5 @@ function calculateHighlights(squares) {
     }
   }
 
-  return [...new Set(highlights)];
+  return highlights;
 }
