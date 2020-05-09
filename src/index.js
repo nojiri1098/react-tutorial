@@ -61,7 +61,7 @@ class Game extends React.Component {
     const current = history[history.length - 1];
     const squares = current.squares.slice();
 
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateResult(squares) || squares[i]) {
       return;
     }
 
@@ -94,7 +94,7 @@ class Game extends React.Component {
   render() {
     let history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const result = calculateResult(current.squares);
     const highlights = calculateHighlights(current.squares);
 
     const COL = 3;
@@ -117,8 +117,10 @@ class Game extends React.Component {
     });
 
     let status;
-    if (winner) {
-      status = 'Winner: ' + winner;
+    if (result === 'settled') {
+      status = 'Winner: ' + (this.state.xIsNext ? 'O' : 'X');
+    } else if (result === 'draw') {
+      status = 'Draw';
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
@@ -152,7 +154,7 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-function calculateWinner(squares) {
+function calculateResult(squares) {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -167,11 +169,15 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return 'settled';
     }
   }
 
-  return null;
+  if (squares.includes(null)) {
+    return null
+  }
+
+  return 'draw';
 }
 
 function calculateHighlights(squares) {
