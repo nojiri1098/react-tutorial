@@ -1,16 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-
-type SquareValue = string | null;
-type Squares = Array<SquareValue>;
-type Highlights = Array<number>;
-
-interface SquareProps {
-  value: SquareValue;
-  onClick: () => void;
-  isHighlight: boolean;
-}
+import { calculateResult } from './util';
+import {
+  Squares,
+  Highlights,
+  SquareProps,
+  BoardProps,
+  GameProps,
+  GameState,
+} from './types';
 
 function Square(props: SquareProps) {
   const background = props.isHighlight ? '#f55' : '#fff';
@@ -20,13 +19,6 @@ function Square(props: SquareProps) {
       {props.value}
     </button>
   );
-}
-
-interface BoardProps {
-  squares: Squares;
-  shape: { "col": number, "row": number };
-  onClick: (i: number) => void;
-  highlights: Highlights;
 }
 
 function Board(props: BoardProps) {
@@ -57,18 +49,6 @@ function Board(props: BoardProps) {
       })}
     </div>
   );
-}
-
-interface GameProps { }
-
-interface GameState {
-  history: Array<{
-    squares: Squares;
-    position: number | null;
-  }>;
-  stepNumber: number;
-  xIsNext: boolean;
-  sort: 'asc' | 'desc';
 }
 
 class Game extends React.Component<GameProps, GameState> {
