@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { app } from './modules/reducers';
 import './index.css';
 import { calculateResult } from './util';
 import {
@@ -66,38 +68,15 @@ class Game extends React.Component<GameProps, GameState> {
   }
 
   handleClick(i: number): void {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
-    const current = history[history.length - 1];
-    const squares = current.squares.slice();
 
-    if (calculateResult(squares) || squares[i]) {
-      return;
-    }
-
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      history: history.concat([{
-        squares: squares,
-        position: i,
-      }]),
-      stepNumber: history.length,
-      xIsNext: !this.state.xIsNext,
-    });
   }
 
   jumpTo(step: number): void {
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0,
-    });
+
   }
 
   sortHistory(): void {
-    const sort = this.state.sort === 'asc' ? 'desc' : 'asc';
-    this.setState({
-      history: this.state.history.reverse(),
-      sort: sort,
-    })
+
   }
 
   render() {
@@ -158,6 +137,7 @@ class Game extends React.Component<GameProps, GameState> {
 
 // ========================================
 
+const store = createStore(app);
 ReactDOM.render(
   <Game />,
   document.getElementById('root')

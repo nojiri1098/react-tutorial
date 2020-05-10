@@ -1,5 +1,8 @@
 export type SquareValue = string | null;
 export type Squares = Array<SquareValue>;
+export type Position = number | null;
+export type Sort = 'asc' | 'desc';
+export type StepNumber = number;
 export type Highlights = Array<number>;
 
 export interface SquareProps {
@@ -20,9 +23,9 @@ export interface GameProps { }
 export interface GameState {
   history: Array<{
     squares: Squares;
-    position: number | null;
+    position: Position;
   }>;
   stepNumber: number;
   xIsNext: boolean;
-  sort: 'asc' | 'desc';
+  sort: Sort;
 }
